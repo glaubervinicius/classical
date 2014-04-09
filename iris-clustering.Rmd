@@ -5,36 +5,66 @@ Clustering - K-means
 
 Preparação dos Dados
 -------------------
-
 ```{r}
 # Dados originais
 str(iris)
 # Preparação dos dados para o K-means (apenas variáveis quantitativas)
-newiris <- iris
-newiris$Species <- NULL
-str(newiris)
+irisForKmeans <- iris
+irisForKmeans$Species <- NULL
+str(irisForKmeans)
 ```
 
 Execução do algoritmo de agrupamento
 ------------------------------------
-
 ```{r}
 # Execução do agrupamento k-means
-kmObject <- kmeans(newiris, 3)
-kmObject
+kmeansObj <- kmeans(irisForKmeans, 3)
+kmeansObj
 #Comparando o agrupamento com os dados originais
-table(iris$Species, kmObject$cluster)
+table(iris$Species, kmeansObj$cluster)
 ```
 
 Visualização do agrupamento
 ---------------------------
 ```{r}
-plot(newiris$Sepal.Length, newiris$Sepal.Width, col=kmObject$cluster, main="K-means Clustering of Iris Data Set (50 flowers)", xlab="Sepal Length (cm)", ylab="Sepal Width (cm)")
-points(kmObject$centers[, c("Sepal.Length", "Sepal.Width")], col=unique(iris$Species), pch=16, cex=2)
+plot(irisForKmeans$Sepal.Length, irisForKmeans$Sepal.Width, col=kmeansObj$cluster, main="K-means Clustering of Iris Data Set (150 flowers)", xlab="Sepal Length (cm)", ylab="Sepal Width (cm)")
+points(kmeansObj$centers[, c("Sepal.Length", "Sepal.Width")], col=unique(iris$Species), pch=16, cex=2)
 legend("bottomright", levels(iris$Species), pch=1, col=unique(iris$Species))
 ```
 ```{r}
-plot(newiris$Petal.Length, newiris$Petal.Width, col=kmObject$cluster, main="K-means Clustering of Iris Data Set (50 flowers)", xlab="Petal Length (cm)", ylab="Petal Width (cm)")
-points(kmObject$centers[, c("Petal.Length", "Petal.Width")], col=unique(iris$Species), pch=16, cex=2)
+plot(irisForKmeans$Petal.Length, irisForKmeans$Petal.Width, col=kmeansObj$cluster, main="K-means Clustering of Iris Data Set (150 flowers)", xlab="Petal Length (cm)", ylab="Petal Width (cm)")
+points(kmeansObj$centers[, c("Petal.Length", "Petal.Width")], col=unique(iris$Species), pch=16, cex=2)
 legend("bottomright", levels(iris$Species), pch=1, col=unique(iris$Species))
+```
+
+Clustering - Hierarchical
+=========================
+
+Preparação dos Dados
+-------------------
+```{r}
+# Dados originais
+str(iris)
+# Preparação dos dados para o agrupamento hierárquico (apenas variáveis quantitativas e uma amostra de 40 itens para facilitar a visualização)
+i <- sample(1:dim(iris)[1], 40)
+irisForHierarchical <- iris[i, ]
+irisForHierarchical$Species <- NULL
+str(irisForHierarchical)
+```
+
+Execução do algoritmo de agrupamento
+------------------------------------
+```{r}
+# Cálculo da matriz de distâncias (method = "euclidean")
+distObj <- dist(irisForHierarchical)
+# Execução do agrupamento hierárquico (method = "complete")
+hclustObj <- hclust(distObj)
+```
+
+Visualização do agrupamento
+---------------------------
+```{r}
+plot(hclustObj, hang = -1, labels=iris$Species[i])
+# Corte da árvore em 3 clusters
+rect.hclust(hclustObj, k=3)
 ```
